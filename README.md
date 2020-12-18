@@ -68,7 +68,8 @@ content_wrapper_attributes:
 about us content goes here
 
 ```
-The properties for the anchor, wrapper tag and wrapper attributes are optional.   
+The properties for the anchor, wrapper tag and wrapper attributes are optional.  
+
 __anchor__  
 If no anchor id property is given, the plugin will create an anchor with `id` out of the `h1` of your content in kebab 
 case. So for the content of the about us section the `id` of the anchor will be `about-our-company`.  
