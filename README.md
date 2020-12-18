@@ -23,7 +23,8 @@ Let's assume you have four pages:
 * `/pages/index.md`
 * `/pages/service.md`
 * `/pages/prices.md`
-* `/pages/about-us.md`
+* `/pages/about-us.md`  
+
 and you want to show the content of service, prices and about-us page on the index page, to get only one `index.html` 
   page compiled.
 
