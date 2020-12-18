@@ -24,7 +24,7 @@ module.exports = (() => {
     const getContentToAdd = pagesToAdd => {
         return pagesToAdd.map(({ meta, content }) => ({
             page: meta[nameProperty],
-            order: meta[orderProperty],
+            order: meta[orderProperty] || 1,
             anchorId: meta[anchorIdProperty] || false,
             tag: meta[tagProperty] || 'section',
             attributes: meta[attributesProperty] || [],
