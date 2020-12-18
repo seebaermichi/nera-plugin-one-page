@@ -1,0 +1,5 @@
+property_name: add_to_page
+order_property: add_to_page_order
+anchor_id_property: anchor_id
+content_wrapper_tag_property: content_wrapper_tag
+content_wrapper_attributes_property: content_wrapper_attributes

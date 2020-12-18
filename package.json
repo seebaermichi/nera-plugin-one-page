@@ -1,0 +1,16 @@
+{
+  "name": "one-page",
+  "version": "1.0.0",
+  "description": "A plugin for static side generator Nera to join content from different pages on one or more pages.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "“Michael <micha.becker79@gmail.com> (https://github.com/seebaermichi)",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seebaermichi/nera-plugin-one-page"
+  }
+}
