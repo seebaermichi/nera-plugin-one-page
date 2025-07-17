@@ -1,35 +1,67 @@
-# One page - Nera plugin
-This is a plugin for the static side generator [Nera](https://github.com/seebaermichi/nera) to show content from 
-different page markdown files on one page.
+# 📄 One Page – Nera Plugin
 
-## Installation
-At first, you need to place this plugin in the `src/plugins` folder of your Nera project.  
+A plugin for the static site generator [Nera](https://github.com/seebaermichi/nera) to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
 
-## Configuration
-This is the default configuration. It defines the properties which should be used in the meta section of the pages 
-which should be merged. All values in this file are the default ones, so if you use these, you can leave your config 
-file empty.
+## ✨ Features
+
+-   Merge content from multiple `.md` files into one HTML page
+-   Define content order and anchor IDs
+-   Auto-generate anchors from headings if none provided
+-   Optional tag and attribute wrappers per section
+-   Fully configurable via frontmatter and plugin defaults
+
+## 🚀 Installation
+
+Install the plugin in your Nera project:
+
+```bash
+npm install @nera-static/plugin-one-page
+```
+
+No further setup required — the plugin uses sensible defaults.
+
+## ⚙️ Configuration
+
+You define behavior directly in the meta section (frontmatter) of your markdown files. By default, the plugin uses the following meta keys:
+
+```yaml
+add_to_page: <path to main page>
+add_to_page_order: <sorting order>
+anchor_id: <custom anchor ID>
+content_wrapper_tag: <e.g., section, div>
+content_wrapper_attributes:
+    - attribute: ...
+      value: ...
+```
+
+If you'd like to override the default property names, you can create a file `config/one-page.yaml` in your project with custom keys:
+
 ```yaml
 property_name: add_to_page
 order_property: add_to_page_order
-anchor_id_property: anchor
+anchor_id_property: anchor_id
 content_wrapper_tag_property: content_wrapper_tag
 content_wrapper_attributes_property: content_wrapper_attributes
-
 ```
 
-## Usage
-Let's assume you have four pages:
-* `/pages/index.md`
-* `/pages/service.md`
-* `/pages/prices.md`
-* `/pages/about-us.md`  
+## 🧩 Usage
 
-and you want to show the content of service, prices and about-us page on the index page, to get only one `index.html` 
-  page compiled.
+Suppose you want to merge `service.md`, `prices.md`, and `about-us.md` into `index.html`.
 
-To achieve this the meta section of service, prices and about-us page should look like follows:  
-_/pages/service.md_
+### Directory structure
+
+```
+pages/
+├── index.md
+├── service.md
+├── prices.md
+└── about-us.md
+```
+
+### Meta frontmatter of sub-pages
+
+#### `pages/service.md`
+
 ```markdown
 ---
 title: Service
@@ -37,10 +69,12 @@ add_to_page: /index.html
 add_to_page_order: 1
 anchor_id: service-section
 ---
-service content goes here
 
+Content for service
 ```
-_/pages/prices.md_
+
+#### `pages/prices.md`
+
 ```markdown
 ---
 title: Prices
@@ -51,34 +85,60 @@ content_wrapper_attributes:
     - attribute: class
       value: price-wrapper
 ---
-prices content goes here
 
+Prices content
 ```
-_/pages/about-us.md_
+
+#### `pages/about-us.md`
+
 ```markdown
 ---
-title: About us
+title: About Us
 add_to_page: /index.html
 add_to_page_order: 3
 content_wrapper_attributes:
-    - attribute: style
-      value: background-color: red;
+  - attribute: style
+    value: background-color: red;
 ---
-# About our company
-about us content goes here
 
+# About Our Company
+
+About content goes here.
 ```
-The properties for the anchor, wrapper tag and wrapper attributes are optional.  
 
-__anchor__  
-If no anchor id property is given, the plugin will create an anchor with `id` out of the `h1` of your content in kebab 
-case. So for the content of the about us section the `id` of the anchor will be `about-our-company`.  
-If there is an anchor id property, like for the service section, it will use this one.
+### What it generates
 
-__wrapper tag__  
-The plugin will wrap the content of your section with a `section` tag by default. If your provide another tag, like 
-`div` it will use this instead.  
+The content of `service.md`, `prices.md`, and `about-us.md` will be appended to the output of `index.html`, wrapped in tags and anchor elements like:
 
-__wrapper attributes__  
-You can also define attributes, which will be added to the wrapper tag. This is an array of objects with two 
-properties: `attribute` and `value` (see prices and about us as an example).  
+```html
+<section class="...">
+    <a id="service-section"></a>
+    Content for service
+</section>
+
+<div class="price-wrapper">
+    <a id="prices"></a>
+    Prices content
+</div>
+
+<section style="background-color: red;">
+    <a id="about-our-company"></a>
+    About content goes here.
+</section>
+```
+
+## 🧪 Development
+
+```bash
+npm install
+npm test
+```
+
+## 📦 License
+
+MIT
+
+## 🧑‍💻 Author
+
+Michael Becker  
+[GitHub](https://github.com/seebaermichi)
