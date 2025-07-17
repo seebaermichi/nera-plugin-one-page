@@ -1,4 +1,4 @@
-# 📄 One Page – Nera Plugin
+# 📄 @nera-static/plugin-one-page
 
 A plugin for the static site generator [Nera](https://github.com/seebaermichi/nera) to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
 
