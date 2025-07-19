@@ -134,11 +134,17 @@ npm install
 npm test
 ```
 
-## 📦 License
-
-MIT
-
 ## 🧑‍💻 Author
 
 Michael Becker  
-[GitHub](https://github.com/seebaermichi)
+[https://github.com/seebaermichi](https://github.com/seebaermichi)
+
+## 🔗 Links
+
+-   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-one-page)
+-   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-one-page)
+-   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+
+## 📦 License
+
+MIT
