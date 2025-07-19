@@ -1,7 +1,7 @@
 {
     "name": "@nera-static/plugin-one-page",
-    "version": "2.0.0",
-    "description": "A plugin for static side generator Nera to join content from different pages on one or more pages.",
+    "version": "2.0.1",
+    "description": "A plugin for Nera static site generator to merge content from multiple markdown pages into single output pages. Perfect for landing pages and one-page layouts.",
     "main": "index.js",
     "scripts": {
         "lint": "eslint .",
@@ -21,7 +21,11 @@
         "plugin",
         "one-page",
         "static-site",
-        "template"
+        "static-site-generator",
+        "content-merging",
+        "landing-page",
+        "markdown",
+        "frontmatter"
     ],
     "author": "Michael Becker",
     "license": "MIT",
@@ -34,7 +38,7 @@
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-one-page#readme",
     "dependencies": {
-        "@nera-static/plugin-utils": "^1.0.3"
+        "@nera-static/plugin-utils": "^1.1.0"
     },
     "engines": {
         "node": ">=18"

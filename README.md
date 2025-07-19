@@ -132,7 +132,18 @@ The content of `service.md`, `prices.md`, and `about-us.md` will be appended to 
 ```bash
 npm install
 npm test
+npm run lint
 ```
+
+### 🔄 Compatibility
+
+-   **Nera v4.1.0+**: Full compatibility with latest static site generator
+-   **Node.js 18+**: Modern JavaScript features and ES modules
+-   **Plugin Utils v1.1.0+**: Enhanced plugin utilities integration
+
+### 🏗️ Architecture
+
+This plugin uses the `getMetaData()` function to process page content and merge sections based on frontmatter configuration. It operates purely on content level without requiring templates.
 
 ## 🧑‍💻 Author
 
@@ -144,6 +155,7 @@ Michael Becker
 -   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-one-page)
 -   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-one-page)
 -   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+-   [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
 
 ## 📦 License
 
