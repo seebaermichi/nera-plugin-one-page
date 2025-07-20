@@ -1,14 +1,16 @@
-# 📄 @nera-static/plugin-one-page
+# @nera-static/plugin-one-page
 
-A plugin for the static site generator [Nera](https://github.com/seebaermichi/nera) to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
+A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
 
 ## ✨ Features
 
--   Merge content from multiple `.md` files into one HTML page
--   Define content order and anchor IDs
--   Auto-generate anchors from headings if none provided
--   Optional tag and attribute wrappers per section
--   Fully configurable via frontmatter and plugin defaults
+- Merge content from multiple `.md` files into one HTML page
+- Define content order and anchor IDs per section
+- Auto-generate anchors from headings if not provided
+- Optional tag and attribute wrappers for each section
+- Configurable via frontmatter and optional `config/one-page.yaml`
+- Lightweight and zero-runtime overhead
+- Full compatibility with Nera v4.1.0+
 
 ## 🚀 Installation
 
@@ -18,23 +20,25 @@ Install the plugin in your Nera project:
 npm install @nera-static/plugin-one-page
 ```
 
-No further setup required — the plugin uses sensible defaults.
+No additional setup required – the plugin works out of the box using default frontmatter keys.
 
 ## ⚙️ Configuration
 
-You define behavior directly in the meta section (frontmatter) of your markdown files. By default, the plugin uses the following meta keys:
+Define plugin behavior in your markdown files' frontmatter:
 
 ```yaml
-add_to_page: <path to main page>
-add_to_page_order: <sorting order>
-anchor_id: <custom anchor ID>
-content_wrapper_tag: <e.g., section, div>
+add_to_page: /index.html
+add_to_page_order: 1
+anchor_id: custom-anchor
+content_wrapper_tag: section
 content_wrapper_attributes:
-    - attribute: ...
-      value: ...
+  - attribute: class
+    value: section-class
 ```
 
-If you'd like to override the default property names, you can create a file `config/one-page.yaml` in your project with custom keys:
+### Optional global configuration
+
+Create `config/one-page.yaml` to override default keys:
 
 ```yaml
 property_name: add_to_page
@@ -46,9 +50,7 @@ content_wrapper_attributes_property: content_wrapper_attributes
 
 ## 🧩 Usage
 
-Suppose you want to merge `service.md`, `prices.md`, and `about-us.md` into `index.html`.
-
-### Directory structure
+### Example directory structure
 
 ```
 pages/
@@ -58,9 +60,9 @@ pages/
 └── about-us.md
 ```
 
-### Meta frontmatter of sub-pages
+### Sample frontmatter
 
-#### `pages/service.md`
+#### `service.md`
 
 ```markdown
 ---
@@ -73,7 +75,7 @@ anchor_id: service-section
 Content for service
 ```
 
-#### `pages/prices.md`
+#### `prices.md`
 
 ```markdown
 ---
@@ -82,14 +84,14 @@ add_to_page: /index.html
 add_to_page_order: 2
 content_wrapper_tag: div
 content_wrapper_attributes:
-    - attribute: class
-      value: price-wrapper
+  - attribute: class
+    value: price-wrapper
 ---
 
 Prices content
 ```
 
-#### `pages/about-us.md`
+#### `about-us.md`
 
 ```markdown
 ---
@@ -106,26 +108,28 @@ content_wrapper_attributes:
 About content goes here.
 ```
 
-### What it generates
-
-The content of `service.md`, `prices.md`, and `about-us.md` will be appended to the output of `index.html`, wrapped in tags and anchor elements like:
+### Generated output
 
 ```html
-<section class="...">
-    <a id="service-section"></a>
-    Content for service
+<section>
+  <a id="service-section"></a>
+  Content for service
 </section>
 
 <div class="price-wrapper">
-    <a id="prices"></a>
-    Prices content
+  <a id="prices"></a>
+  Prices content
 </div>
 
 <section style="background-color: red;">
-    <a id="about-our-company"></a>
-    About content goes here.
+  <a id="about-our-company"></a>
+  About content goes here.
 </section>
 ```
+
+## 📊 Generated Output
+
+The plugin appends content from other pages to the target output page (`add_to_page`) in defined order. It wraps each section and anchors as configured and generates clean, static HTML.
 
 ## 🧪 Development
 
@@ -135,27 +139,29 @@ npm test
 npm run lint
 ```
 
-### 🔄 Compatibility
+Tests use [Vitest](https://vitest.dev) and validate:
 
--   **Nera v4.1.0+**: Full compatibility with latest static site generator
--   **Node.js 18+**: Modern JavaScript features and ES modules
--   **Plugin Utils v1.1.0+**: Enhanced plugin utilities integration
-
-### 🏗️ Architecture
-
-This plugin uses the `getMetaData()` function to process page content and merge sections based on frontmatter configuration. It operates purely on content level without requiring templates.
+- Merging behavior and section order
+- Anchor ID generation and defaults
+- Wrapper tag rendering and attributes
+- Output HTML structure
 
 ## 🧑‍💻 Author
 
-Michael Becker  
+Michael Becker
 [https://github.com/seebaermichi](https://github.com/seebaermichi)
 
 ## 🔗 Links
 
--   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-one-page)
--   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-one-page)
--   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
--   [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
+- [Plugin Repository](https://github.com/seebaermichi/nera-plugin-one-page)
+- [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-one-page)
+- [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+
+## 🧩 Compatibility
+
+- **Nera**: v4.1.0+
+- **Node.js**: >= 18
+- **Plugin API**: Uses `getMetaData()` for section merging
 
 ## 📦 License
 
