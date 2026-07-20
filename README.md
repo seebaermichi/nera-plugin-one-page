@@ -1,5 +1,8 @@
 # @nera-static/plugin-one-page
 
+[![Test](https://github.com/seebaermichi/nera-plugin-one-page/actions/workflows/test.yml/badge.svg)](https://github.com/seebaermichi/nera-plugin-one-page/actions/workflows/test.yml)
+[![npm version](https://img.shields.io/npm/v/@nera-static/plugin-one-page)](https://www.npmjs.com/package/@nera-static/plugin-one-page)
+
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
 
 ## ✨ Features
