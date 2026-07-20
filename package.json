@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "lint": "eslint .",
-        "test": "vitest"
+        "test": "vitest",
+        "prepare": "husky"
     },
     "type": "module",
     "exports": {
@@ -37,6 +38,9 @@
         "url": "https://github.com/seebaermichi/nera-plugin-one-page/issues"
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-one-page#readme",
+    "publishConfig": {
+        "access": "public"
+    },
     "dependencies": {
         "@nera-static/plugin-utils": "^1.2.0",
         "cheerio": "^1.1.0"
