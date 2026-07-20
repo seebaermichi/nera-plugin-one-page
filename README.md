@@ -36,6 +36,18 @@ content_wrapper_attributes:
     value: section-class
 ```
 
+`content_wrapper_attributes` may also be written as a plain mapping, which is
+often shorter:
+
+```yaml
+content_wrapper_attributes:
+  class: section-class
+  data-role: banner
+```
+
+Attribute values are HTML-escaped, so a value containing quotes cannot break out
+of the attribute.
+
 ### Optional global configuration
 
 Create `config/one-page.yaml` to override default keys:
@@ -160,7 +172,7 @@ Michael Becker
 ## 🧩 Compatibility
 
 - **Nera**: v4.1.0+
-- **Node.js**: >= 18
+- **Node.js**: >= 20.18.1 — required by `cheerio`, this plugin's runtime dependency
 - **Plugin API**: Uses `getMetaData()` for section merging
 
 ## 📦 License

@@ -2,17 +2,73 @@ import path from 'path'
 import { load } from 'cheerio'
 import { getConfig } from '@nera-static/plugin-utils'
 
-const CONFIG_PATH = path.resolve(process.cwd(), 'config/one-page.yaml')
-const config = getConfig(CONFIG_PATH) || {}
+/**
+ * Resolved per call rather than at module scope, so edits to
+ * config/one-page.yaml are picked up without restarting `npm run dev`.
+ */
+function getSettings() {
+    const config =
+        getConfig(path.resolve(process.cwd(), 'config/one-page.yaml')) || {}
 
-const nameProp = config.property_name || 'add_to_page'
-const orderProp = config.order_property || 'add_to_page_order'
-const anchorProp = config.anchor_id_property || 'anchor_id'
-const tagProp = config.content_wrapper_tag_property || 'content_wrapper_tag'
-const attrProp =
-    config.content_wrapper_attributes_property || 'content_wrapper_attributes'
+    return {
+        nameProp: config.property_name || 'add_to_page',
+        orderProp: config.order_property || 'add_to_page_order',
+        anchorProp: config.anchor_id_property || 'anchor_id',
+        tagProp: config.content_wrapper_tag_property || 'content_wrapper_tag',
+        attrProp:
+            config.content_wrapper_attributes_property ||
+            'content_wrapper_attributes',
+    }
+}
 
-function extractSections(pages) {
+/**
+ * Accepts either shape the wrapper attributes can plausibly be authored in:
+ *
+ *     content_wrapper_attributes:        content_wrapper_attributes:
+ *         - attribute: class                 class: hero
+ *           value: hero
+ *
+ * The mapping form is the natural thing to write and used to throw
+ * `attrs.map is not a function`. Anything else is ignored with a warning
+ * rather than taking the build down.
+ */
+function normalizeWrapperAttrs(attrs) {
+    if (attrs == null) return []
+
+    if (Array.isArray(attrs)) {
+        return attrs
+            .filter((entry) => entry && entry.attribute != null)
+            .map((entry) => ({
+                attribute: String(entry.attribute),
+                value: entry.value ?? '',
+            }))
+    }
+
+    if (typeof attrs === 'object') {
+        return Object.entries(attrs).map(([attribute, value]) => ({
+            attribute,
+            value: value ?? '',
+        }))
+    }
+
+    console.warn(
+        `⚠️ one-page: ignoring content_wrapper_attributes of type ${typeof attrs} — expected a list or a mapping`
+    )
+
+    return []
+}
+
+function escapeAttributeValue(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
+
+function extractSections(pages, settings) {
+    const { nameProp, orderProp, anchorProp, tagProp, attrProp } = settings
+
     return pages
         .filter(({ meta }) => meta?.[nameProp])
         .map(({ meta, content }) => ({
@@ -20,7 +76,7 @@ function extractSections(pages) {
             order: meta[orderProp] ?? 1,
             anchorId: meta[anchorProp] ?? null,
             wrapperTag: meta[tagProp] ?? 'section',
-            wrapperAttrs: meta[attrProp] ?? [],
+            wrapperAttrs: normalizeWrapperAttrs(meta[attrProp]),
             content,
         }))
 }
@@ -39,7 +95,10 @@ function buildWrapper(tag, attrs = []) {
     if (!tag) return { open: '', close: '' }
 
     const attrString = attrs
-        .map(({ attribute, value }) => `${attribute}="${value}"`)
+        .map(
+            ({ attribute, value }) =>
+                `${attribute}="${escapeAttributeValue(value)}"`
+        )
         .join(' ')
     const open = attrString ? `<${tag} ${attrString}>` : `<${tag}>`
     return { open, close: `</${tag}>` }
@@ -63,7 +122,14 @@ function buildMergedContent(content, sections = []) {
 }
 
 export function getMetaData(data) {
-    const sections = extractSections(data.pagesData)
+    // Same guard as page-pagination:54 and page-navigation:41. Without it a
+    // missing pagesData surfaced as `Cannot read properties of undefined`.
+    if (!data || !Array.isArray(data.pagesData)) {
+        return []
+    }
+
+    const settings = getSettings()
+    const sections = extractSections(data.pagesData, settings)
     const grouped = {}
 
     for (const section of sections) {
@@ -77,7 +143,7 @@ export function getMetaData(data) {
     })
 
     return data.pagesData.map(({ meta, content }) => {
-        const mergedSections = grouped[meta.href]
+        const mergedSections = grouped[meta?.href]
         if (!mergedSections) return { meta, content }
 
         return {

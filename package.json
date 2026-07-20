@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/plugin-one-page",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "A plugin for Nera static site generator to merge content from multiple markdown pages into single output pages. Perfect for landing pages and one-page layouts.",
     "main": "index.js",
     "scripts": {
@@ -14,7 +14,7 @@
     "files": [
         "config",
         "index.js",
-        "views"
+        "CHANGELOG.md"
     ],
     "keywords": [
         "nera",
@@ -38,13 +38,13 @@
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-one-page#readme",
     "dependencies": {
-        "@nera-static/plugin-utils": "^1.1.0"
+        "@nera-static/plugin-utils": "^1.2.0",
+        "cheerio": "^1.1.0"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=20.18.1"
     },
     "devDependencies": {
-        "cheerio": "^1.1.0",
         "eslint": "^9.31.0",
         "husky": "^9.1.7",
         "vitest": "^3.2.4"
