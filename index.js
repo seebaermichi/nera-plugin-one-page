@@ -1,6 +1,6 @@
 import path from 'path'
 import { load } from 'cheerio'
-import { getConfig } from '@nera-static/plugin-utils'
+import { getConfig, slugify } from '@nera-static/plugin-utils'
 
 /**
  * Resolved per call rather than at module scope, so edits to
@@ -81,29 +81,6 @@ function extractSections(pages, settings) {
         }))
 }
 
-/**
- * Slugifies a heading into an HTML `id`.
- *
- * The previous rule was `[^\w]+` → `-`, which is ASCII-only: `Über uns` became
- * `-ber-uns` and `Straße` became `stra-e`. A leading hyphen is legal in an HTML
- * `id` but is **not** a valid CSS identifier, so `#-ber-uns` neither matches in
- * a stylesheet nor survives `document.querySelector` — it throws. That broke
- * every scroll-spy script on a German or Spanish one-pager.
- *
- * Same algorithm as `slugifyTag` in nera-plugin-tags, deliberately: an anchor
- * and a tag slug are both URL fragments, and two rules would be worse than one.
- * ß has no NFKD decomposition, so it is expanded first.
- */
-function slugifyHeading(text) {
-    return String(text)
-        .replace(/ß/g, 'ss')
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-}
-
 function buildAnchorId(content, fallbackId) {
     if (fallbackId) return fallbackId
 
@@ -114,7 +91,7 @@ function buildAnchorId(content, fallbackId) {
 
     // A heading of only punctuation or only non-Latin script slugifies to an
     // empty string; emitting `<a id="">` would be worse than emitting nothing.
-    return slugifyHeading(h1) || null
+    return slugify(h1) || null
 }
 
 function buildWrapper(tag, attrs = []) {

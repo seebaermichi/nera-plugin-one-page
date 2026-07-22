@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-07-22
+
+### Changed
+
+-   anchor slugification now calls `slugify` from
+    `@nera-static/plugin-utils` instead of the copy 3.0.0 introduced inline.
+    **Output is unchanged** — it is the same algorithm, moved to where
+    `plugin-tags` shares it, so a future correction to the rule reaches both
+    plugins rather than only the one that noticed. Verified by the unmodified
+    3.0.0 anchor test table, which still passes, and by re-generating the
+    README's Generated Output block and diffing it byte-for-byte
+-   minimum `@nera-static/plugin-utils` raised to `^1.4.0`, which is where
+    `slugify` was added
+
+### Notes
+
+No action needed on upgrade from 3.0.0. If you are coming from 2.x, the
+migration note under 3.0.0 below still applies unchanged.
+
 ## [3.0.0] - 2026-07-22
 
 Outcome of the README audit recorded in `audit/readme/README-one-page.md`.

@@ -87,9 +87,11 @@ When `anchor_id` is not set, the anchor is derived from the section's **first
 `<h1>`**. Headings below `<h1>` are ignored, and a section with no `<h1>` gets
 no anchor at all.
 
-The slug lowercases, expands `ß` to `ss`, strips diacritics, replaces every
-remaining run of non-alphanumerics with a single `-`, and trims leading and
-trailing hyphens:
+The slug rule is `slugify()` from
+[`@nera-static/plugin-utils`](https://www.npmjs.com/package/@nera-static/plugin-utils),
+shared with `@nera-static/plugin-tags` so tag slugs and anchors agree. It
+lowercases, expands `ß` to `ss`, strips diacritics, replaces every remaining run
+of non-alphanumerics with a single `-`, and trims leading and trailing hyphens:
 
 | Heading | Anchor |
 |---|---|
@@ -281,7 +283,7 @@ Michael Becker
   generator feature above the 4.x line and ships no templates, so there is no
   Pug `basedir` dependency and nothing that needs v4.2.0 or v4.3.0.
 - **Node.js**: >= 20.18.1 — required by `cheerio`, this plugin's runtime dependency
-- **Plugin Utils**: `^1.2.0` — only `getConfig()` is used
+- **Plugin Utils**: `^1.4.0` — `getConfig()` and `slugify()`, which is the shared implementation of the anchor slug rule below
 - **Plugin API**: exports `getMetaData()`, which rewrites page content
 
 ## 📦 License
