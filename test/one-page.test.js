@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import {
+    describe,
+    it,
+    expect,
+    beforeAll,
+    afterAll,
+    beforeEach,
+    vi,
+} from 'vitest'
 import { getMetaData } from '../index.js'
 import fs from 'fs'
 import path from 'path'
@@ -128,11 +136,141 @@ describe('OnePagePlugin', () => {
         expect(indexPage.content).not.toContain('<a id=')
     })
 
+    it('appends merged sections after the target page\'s own content', () => {
+        // Documented in the README's Generated Output section; locked here so
+        // the two cannot drift apart again.
+        const indexPage = indexOf(getMetaData({ pagesData: SAMPLE_PAGES }))
+
+        expect(indexPage.content.indexOf('Index content')).toBeLessThan(
+            indexPage.content.indexOf('About content')
+        )
+        expect(indexPage.content.startsWith('<h1>Welcome</h1>')).toBe(true)
+    })
+
     it('leaves pages that are not merge targets untouched', () => {
         const result = getMetaData({ pagesData: SAMPLE_PAGES })
         const about = result.find((p) => p.meta.href === '/about.html')
 
         expect(about.content).toBe('<h1>About Us</h1>\nAbout content')
+    })
+})
+
+describe('anchor id generation', () => {
+    // v3.0.0. The old rule was `[^\w]+` -> `-`, which is ASCII-only, so every
+    // umlaut produced a leading hyphen — an id that is legal HTML but an
+    // invalid CSS identifier, breaking `#id` selectors and querySelector.
+    const anchorFor = (content) => {
+        const indexPage = indexOf(
+            getMetaData({
+                pagesData: [
+                    { meta: { href: '/index.html' }, content: 'Main' },
+                    {
+                        meta: { href: '/x.html', add_to_page: '/index.html' },
+                        content,
+                    },
+                ],
+            })
+        )
+        const match = indexPage.content.match(/<a id="([^"]*)"><\/a>/)
+        return match ? match[1] : null
+    }
+
+    it.each([
+        ['<h1>About Our Company</h1>', 'about-our-company'],
+        ['<h1>Über uns</h1>', 'uber-uns'],
+        ['<h1>Qué hacemos</h1>', 'que-hacemos'],
+        ['<h1>Straße</h1>', 'strasse'],
+        ['<h1>About Us!</h1>', 'about-us'],
+        ['<h1>  Spaced  Out  </h1>', 'spaced-out'],
+    ])('slugifies %s to %s', (content, expected) => {
+        expect(anchorFor(content)).toBe(expected)
+    })
+
+    it('never emits an id starting or ending with a hyphen', () => {
+        for (const heading of ['Über uns', '!!!Hallo!!!', '— Dash —']) {
+            const id = anchorFor(`<h1>${heading}</h1>`)
+            if (id !== null) expect(id).toMatch(/^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$/)
+        }
+    })
+
+    it('emits no anchor when the heading slugifies to nothing', () => {
+        // Previously produced `<a id="-"></a>`, a duplicate on every such page.
+        expect(anchorFor('<h1>!!!</h1>')).toBeNull()
+        expect(anchorFor('<h1>日本語</h1>')).toBeNull()
+    })
+
+    it('still prefers an explicit anchor_id verbatim', () => {
+        const indexPage = indexOf(
+            getMetaData({
+                pagesData: [
+                    { meta: { href: '/index.html' }, content: 'Main' },
+                    {
+                        meta: {
+                            href: '/x.html',
+                            add_to_page: '/index.html',
+                            anchor_id: 'Über_uns',
+                        },
+                        content: '<h1>Ignored</h1>',
+                    },
+                ],
+            })
+        )
+
+        expect(indexPage.content).toContain('<a id="Über_uns"></a>')
+    })
+
+    it('ignores headings below h1', () => {
+        expect(anchorFor('<h2>Just an H2</h2>')).toBeNull()
+        expect(anchorFor('<h2>Sub</h2><h1>Real Title</h1>')).toBe('real-title')
+    })
+})
+
+describe('unmatched merge targets', () => {
+    it('warns when no page has the targeted href', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+        getMetaData({
+            pagesData: [
+                { meta: { href: '/index.html' }, content: 'Main' },
+                {
+                    // No leading slash — the most likely authoring mistake.
+                    meta: { href: '/x.html', add_to_page: 'index.html' },
+                    content: '<h1>X</h1>',
+                },
+            ],
+        })
+
+        expect(warn).toHaveBeenCalledTimes(1)
+        expect(warn.mock.calls[0][0]).toContain('index.html')
+        expect(warn.mock.calls[0][0]).toContain('add_to_page')
+        warn.mockRestore()
+    })
+
+    it('does not warn when every target resolves', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+        getMetaData({ pagesData: SAMPLE_PAGES })
+
+        expect(warn).not.toHaveBeenCalled()
+        warn.mockRestore()
+    })
+
+    it('names the configured property in the warning', () => {
+        writeConfig('property_name: merge_into\n')
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+        getMetaData({
+            pagesData: [
+                { meta: { href: '/index.html' }, content: 'Main' },
+                {
+                    meta: { href: '/x.html', merge_into: '/nope.html' },
+                    content: '<h1>X</h1>',
+                },
+            ],
+        })
+
+        expect(warn.mock.calls[0][0]).toContain('merge_into')
+        warn.mockRestore()
     })
 })
 

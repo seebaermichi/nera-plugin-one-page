@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/plugin-one-page",
-    "version": "2.0.2",
+    "version": "3.0.0",
     "description": "A plugin for Nera static site generator to merge content from multiple markdown pages into single output pages. Perfect for landing pages and one-page layouts.",
     "main": "index.js",
     "scripts": {

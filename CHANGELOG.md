@@ -5,6 +5,87 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-07-22
+
+Outcome of the README audit recorded in `audit/readme/README-one-page.md`.
+Sixteen findings; the two behavioural ones are below, the rest were
+documentation.
+
+### Changed
+
+-   **BREAKING**: **auto-generated anchor IDs are now non-ASCII safe.** The slug
+    rule was `[^\w]+` → `-`, which is ASCII-only, so every accented heading was
+    mangled and could produce an ID starting with a hyphen. Such an ID is legal
+    HTML but is **not a valid CSS identifier**: `#-ber-uns` matches nothing in a
+    stylesheet and `document.querySelector('#-ber-uns')` throws, which broke
+    scroll-spy and smooth-scroll scripts on any German or Spanish one-pager. The
+    rule now matches `slugifyTag` in `@nera-static/plugin-tags`
+
+    | Heading | v2.x | v3.0.0 |
+    | --- | --- | --- |
+    | `Über uns` | `-ber-uns` | `uber-uns` |
+    | `Qué hacemos` | `qu-hacemos` | `que-hacemos` |
+    | `Straße` | `stra-e` | `strasse` |
+    | `About Us!` | `about-us-` | `about-us` |
+    | `日本語` | `-` | *(no anchor)* |
+
+    Purely alphanumeric headings are unaffected: `About Our Company` remains
+    `about-our-company`. An explicit `anchor_id` is still used verbatim and is
+    never slugified
+
+### Added
+
+-   an unresolved `add_to_page` now logs a warning naming the target and the
+    number of sections that were not merged. The value must equal a page's
+    `meta.href` exactly, so `index.html` without the leading slash merged
+    nothing at all — silently, in a build that exited 0
+-   README documents what was previously undocumented: the defaults for every
+    frontmatter key, the exact-`href` matching rule, that merged source pages
+    still render on their own when they define `layout`, that
+    `content_wrapper_tag: ''` emits no wrapper, and that malformed
+    `content_wrapper_attributes` are dropped rather than fatal
+
+### Fixed
+
+-   **the README's `about-us.md` example was invalid YAML.** It wrote
+    `value: background-color: red;` — a plain scalar containing `": "` — so a
+    reader who copied it lost that page from the build with a single console
+    line. Values containing a colon are now quoted, and the trap is called out
+-   the README's generated-output example showed an `<a id="prices"></a>` the
+    plugin never emitted (anchors are derived from the first `<h1>`, never from
+    the filename), and omitted the target page's own content, the `<p>` wrapping
+    and the retained `<h1>`. The block is now the verbatim output of the
+    example above it
+-   "Auto-generate anchors from headings" corrected to name the first `<h1>`
+    specifically; `<h2>` and below never produced an anchor
+-   removed the "zero-runtime overhead" claim, which contradicted the `cheerio`
+    runtime dependency documented twelve lines below it
+-   Compatibility now states the `@nera-static/plugin-utils` range and explains
+    that the Nera `v4.1.0+` line is a baseline rather than a requirement
+-   added the `## 🤝 Contributing` section, the Author hard break, and the
+    `npx vitest run` guidance (`npm test` is watch mode)
+
+### Migration from v2.x
+
+**If every `<h1>` you rely on for an anchor is plain ASCII letters, digits and
+spaces, nothing changes** — those slugs are byte-identical.
+
+Check your site if either applies:
+
+1.  **A heading contains an accent, an umlaut, `ß`, or non-Latin script.** Its
+    anchor ID changes per the table above. Any in-page link (`href="#-ber-uns"`),
+    CSS rule or script selector using the old value must be updated — or pin the
+    old value by setting `anchor_id` explicitly on that page's frontmatter, which
+    is used verbatim
+2.  **A heading ends in punctuation** (`About Us!`). The trailing hyphen is now
+    trimmed: `about-us-` becomes `about-us`
+
+To find affected pages, grep your `pages/` for headings outside `[A-Za-z0-9 ]`
+and check the anchors in the rendered output before and after upgrading.
+
+The new warning for an unresolved `add_to_page` may surface merges that were
+never working. It is a warning only — nothing that built before fails now.
+
 ## [2.0.2] - 2026-07-20
 
 ### Fixed
