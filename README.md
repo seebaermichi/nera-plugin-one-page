@@ -5,6 +5,8 @@
 
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator to merge content from multiple markdown pages into a single output page. Ideal for landing pages and long-form content.
 
+📖 **Documentation:** [nera.js.org](https://nera.js.org)
+
 ## ✨ Features
 
 - Merge content from multiple `.md` files into one HTML page
@@ -275,6 +277,7 @@ Michael Becker
 
 - [Plugin Repository](https://github.com/seebaermichi/nera-plugin-one-page)
 - [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-one-page)
+- [Nera Website](https://nera.js.org)
 - [Nera Static Site Generator](https://github.com/seebaermichi/nera)
 
 ## 🧩 Compatibility
