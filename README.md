@@ -144,11 +144,14 @@ pages/
 ```markdown
 ---
 title: Home
-layout: layouts/default.pug
+layout: pages/default.pug
 ---
 
 Welcome to our company.
 ```
+
+`pages/default.pug` is the page template `nera new` scaffolds, at
+`theme/views/pages/default.pug`; use whichever template your site has.
 
 #### `service.md`
 
