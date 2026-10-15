@@ -32,7 +32,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/seebaermichi/nera-plugin-one-page.git"
+        "url": "git+https://github.com/seebaermichi/nera-plugin-one-page.git"
     },
     "bugs": {
         "url": "https://github.com/seebaermichi/nera-plugin-one-page/issues"
