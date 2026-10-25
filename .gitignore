@@ -4,3 +4,9 @@ node_modules
 # npm credentials — never commit
 .npmrc
 plans/
+
+# Internal development files (plans, Snagio workflow, specs) never belong in the repo
+/.claude/
+/.mcp.json
+/ROADMAP*.md
+/DESIGN-BRIEF.md
